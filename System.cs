@@ -1,43 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace djikstra
+namespace dijkstraConsole
 {
     public class System
     {
-        public List<Link> system { get; set; }
-        public string name { get; set; }
+        private List<Link> path;
 
-        public System(string name, int size)
+        public List<Link> Path
         {
-            this.name = name;
+            get => path;
+            set => path = value;
+        }
+        
+        public System(int size)
+        {
+            path = SystemDijkstra(SystemCreation(size), size);
+        }
 
-            system = SystemCreation(size);
 
-
-            Console.WriteLine("---------START-----------");
-            foreach (var link in system)
-            {
-                link.printLink();
-            }
-            Console.WriteLine("---------END-----------");
-
-            List<Link> path = SystemDijkstra(system, size);
-
-            Console.WriteLine("---------START-----------");
+        public void PrintPath()
+        {
             foreach (var link in path)
             {
                 link.printLink();
             }
-            Console.WriteLine("---------END-----------");
-
-
         }
+        
         /*
          * Creating our System of links & nodes
          * @return List<Link>
          */
-        private static List<Link> SystemCreation(int size)
+        private List<Link> SystemCreation(int size)
         {
             var random = new Random();
             List<Link> linksList = new List<Link>();
@@ -70,12 +64,11 @@ namespace djikstra
             //form : (Link, Origin, Total Weight)
             var storedLinks = new List<Tuple<Link, int, int>>();
             var chosenLinks = new List<Tuple<Link, int, int>>();
-            Tuple<Link, int, int> savedTuple = new Tuple<Link, int, int>(new Link(new Node(new int(), new int(), new int()), new Node(new int(), new int(), new int())), new int(), new int());
-
+            var savedTuple = new Tuple<Link, int, int>(new Link(), 0, 0);
             int actualNodeId = 0;
             int totalWeight = 0;
             int iteration = 0;
-            Nullable<int> minimalWeight;
+            int? minimalWeight;
 
             List<int> passedNodes = new List<int>();
 
@@ -105,12 +98,7 @@ namespace djikstra
                         &&
                         (!passedNodes.Contains(tupleLink.Item1.nodes[0].id) || !passedNodes.Contains(tupleLink.Item1.nodes[1].id)))
                     {
-                        if (!minimalWeight.HasValue)
-                        {
-                            minimalWeight = tupleLink.Item3;
-                            savedTuple = tupleLink;
-                        }
-                        else if (tupleLink.Item3 < minimalWeight)
+                        if (!minimalWeight.HasValue || tupleLink.Item3 < minimalWeight)
                         {
                             minimalWeight = tupleLink.Item3;
                             savedTuple = tupleLink;

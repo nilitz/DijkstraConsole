@@ -1,12 +1,17 @@
 ﻿using System;
 
-namespace djikstra
+namespace dijkstraConsole
 {
     public class Link
     {
         public Node[] nodes = new Node[2];
         public int weight { get; set; }
 
+        public Link()
+        {
+            nodes[0] = new Node();
+            nodes[1] = new Node();
+        }
         public Link(Node nodeA, Node nodeB)
         {
             nodes[0] = nodeA;
